@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+  if book_list.length
+    ul
+      each book in book_list
+        li
+          a(href=book.url) #{book.title}
+          |  (#{book.author.name})
+        //- Of interest here is that each book is defined as two lines, using the pipe for the second line. This approach is needed because if the author name were on the previous line then it would be part of the hyperlink.
+  else
+    p There are no books.

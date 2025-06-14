@@ -1,0 +1,61 @@
+extends layout
+
+block content
+
+    h1 #{title}: #{author.name}
+    p= author.lifespan
+
+    if author_books.length
+
+        p #[strong Delete the following books before attempting to delete this author.]
+        div(style='margin-left:20px;margin-top:20px')
+            h4 Books
+            dl 
+                each book in author_books
+                    dt 
+                        a(href=book.url) #{book.title}
+                    dd #{book.summary}
+
+    else
+        p Do you really want to delete this Author?
+
+        form(method='POST')
+            div.form-group
+                input#authorid.form-control(type='hidden', name='authorid', value=author._id)
+
+            button.btn.btn-primary(type='submit') Delete
+
+
+//- 🧩 Was macht input(type='hidden')?
+
+//- input#authorid.form-control(type='hidden', name='authorid', value=author._id)
+//- Dieser input:
+
+//- wird NICHT sichtbar angezeigt (weil type='hidden').
+//- trägt Daten (hier: die ID des Autors) mit im Formular, ohne dass der Benutzer sie sieht oder verändert.
+//- wird beim Absenden des Formulars mitgesendet, genau wie ein normales <input>-Feld.
+//- 🔍 Warum wird das verwendet?
+
+//- In deinem Beispiel:
+
+//- p Do you really want to delete this Author?
+
+//- form(method='POST')
+//-     input(type='hidden', name='authorid', value=author._id)
+//-     button(type='submit') Delete
+//- 💡 Zweck:
+//- Du zeigst dem Benutzer nur die Frage „Willst du wirklich löschen?“
+//- Aber beim Absenden brauchst du eine Info, wen genau du löschen willst.
+//- Das erledigt das hidden-Feld: Es sendet author._id an den Server mit – im Hintergrund.
+//- 📤 Beispiel – Gesendete Daten:
+
+//- Wenn du auf „Delete“ klickst, wird an den Server z. B. gesendet:
+
+//- POST /catalog/author/:id/delete
+//- Content-Type: application/x-www-form-urlencoded
+
+//- authorid=664fb0bcb4b89134b83c62a2
+//- Der Server kann dann z. B. in deinem Controller so darauf zugreifen:
+
+//- const authorId = req.body.authorid;
+//- Author.findByIdAndDelete(authorId)

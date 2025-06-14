@@ -1,0 +1,66 @@
+Wie weiß mein Code, dass er die Daten aus der MongoDB abrufen muss?
+
+Der Code nutzt Mongoose, eine ODM-Bibliothek (Object Document Mapper) für MongoDB. Das bedeutet, dass die Modelle (Book, Genre, BookInstance, Author) mit der Datenbank verbunden sind und die entsprechenden Methoden von Mongoose intern MongoDB-Abfragen ausführen.
+
+Wie funktioniert das genau?
+
+1. Modelle werden mit require importiert:
+const Book = require("../models/book");
+const Genre = require("../models/genre");
+const BookInstance = require("../models/bookinstance");
+const Author = require("../models/author");
+
+Diese Modelle (book.js, genre.js, etc.) sind Mongoose-Modelle. Sie definieren, wie die Daten in MongoDB gespeichert und abgerufen werden.
+
+2. Datenbankabfragen mit countDocuments()
+const numBooks = await Book.countDocuments({}).exec();
+Book.countDocuments({}) ist eine Mongoose-Query, die MongoDB fragt:
+"Wie viele Dokumente gibt es in der books-Collection?"
+.exec() wird verwendet, um die Query als Promise auszuführen.
+
+3. Alle Abfragen laufen parallel mit Promise.all([])
+const [
+    numBooks,
+    numBookInstances,
+    numAvailableBookInstances,
+    numAuthors,
+    numGenres
+] = await Promise.all([...]);
+Alle Queries werden parallel ausgeführt → die Performance verbessert sich.
+Sobald alle Queries abgeschlossen sind, werden die Ergebnisse in die jeweiligen Variablen gespeichert.
+
+4. Daten werden an die View weitergegeben
+res.render("index", {
+    title: "Local Library Home",
+    book_count: numBooks,
+    book_instance_count: numBookInstances,
+    book_instance_available_count: numAvailableBookInstances,
+    author_count: numAuthors,
+    genre_count: numGenres,
+});
+Die gesammelten Daten werden an eine Template-Engine (z. B. EJS, Pug, Handlebars) übergeben.
+Das index.ejs-Template kann dann book_count usw. anzeigen.
+
+
+Wie weiß Mongoose, mit welcher MongoDB es verbunden ist?
+In deiner Express-App gibt es irgendwo einen Datenbankverbindungs-Code, z. B. in app.js oder db.js:
+
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb://localhost:27017/local_library", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+mongoose.connect() verbindet sich mit der MongoDB-Datenbank (lokal oder in der Cloud).
+Danach sind alle Mongoose-Modelle automatisch mit der Datenbank verbunden.
+
+
+Zusammenfassung
+✅ Mongoose-Modelle sind direkt mit der MongoDB-Collection verbunden.
+✅ countDocuments() ruft die Anzahl der Dokumente aus MongoDB ab.
+✅ Promise.all([]) führt mehrere Abfragen parallel aus.
+✅ Die Verbindung zur MongoDB erfolgt in mongoose.connect(), meist in app.js oder db.js.
+

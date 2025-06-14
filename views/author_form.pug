@@ -1,0 +1,55 @@
+extends layout 
+
+block content
+    h1=title
+
+    form(method='POST')
+        div.form-group
+            label(for='first_name') First name: 
+            input#first_name.form-control(type='text', placeholder='First name (Christian)' name='first_name' required value=(undefined===author ? '' : author.first_name))
+
+            label(for='family_name') Family Name: 
+            input#family_name.form-control(type='text', placeholder='Family name (Surname)' name='family_name' required value=(undefined===author ? '' : author.family_name))
+
+        div.form-group
+            label(for='date_of_birth') Date of Birth:
+            input#date_of_birth.form-control(type='date' name='date_of_birth' value=(undefined===author ? '' : author.date_of_birth))
+
+            label(for='date_of_death') Date of Death: 
+            input#date_of_death.form-control(type='date' name='date_of_death' value=(undefined===author ? '': author.date_of_death))
+
+            button.btn.btn-primary(type='submit', style='margin-top: 1rem;') Submit 
+
+        if errors 
+            ul 
+                for error in errors 
+                    li!= error.msg
+        
+        //- != in Pug bedeutet: nicht-escaptes Einfügen, also HTML direkt rendern, ohne Sonderzeichen zu entschärfen.
+
+        //- Warum != statt =
+        //- =: würde HTML escapen → also z. B. < wird zu &lt;, usw.
+        //- !=: gibt den Text roh aus. Das brauchst du hier meist nur, wenn du HTML im Fehlertext hast** (z. B. fettgedruckte Wörter im Fehler).
+
+        div.form-group
+
+    //- 🔧 Zweck:
+    //- Gruppiert ein Label mit dem zugehörigen Input-Feld.
+    //- Fügt vertikalen Abstand zwischen den Formularfeldern hinzu.
+    //- Dient der semantischen Gruppierung und besseren Responsiveness.
+    //- Beispiel mit Wirkung:
+    //- div.form-group
+    //-   label(for='email') Email:
+    //-   input#email.form-control(type='email' name='email')
+    //- → Bootstrap sorgt dafür, dass das Label oben steht, das Input-Feld unten, mit etwas Abstand – und optisch gut strukturiert.
+
+    //- 🔹 form-control (an input)
+
+    //- 🔧 Zweck:
+    //- Macht das Input-Feld vollständig responsive.
+    //- Fügt Standard-Styling hinzu:
+    //- volle Breite (width: 100%)
+    //- Padding innen
+    //- einheitlicher Rahmen
+    //- saubere Schrift etc.
+    //- Ohne form-control sieht das Input-Feld nur wie ein Standard-Browserfeld aus. Mit form-control sieht es "modern" aus.
