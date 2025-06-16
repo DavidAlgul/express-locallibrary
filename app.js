@@ -48,7 +48,11 @@ mongoose.set("strictQuery", false);
 
 // Replace the line with the following code that uses process.env.MONGODB_URI to get the connection string from an environment variable named MONGODB_URI if has been set (use your own database URL instead of the placeholder below).
 
-const mongoDB = process.env.MONGODB_URI;
+const dev_db_url = "mongodb+srv://cooluser:start123@cluster0.eltg3.mongodb.net/local_library?retryWrites=true&w=majority&appName=Cluster0";
+
+const mongoDB = process.env.MONGODB_URI || dev_db_url;
+
+// const mongoDB = "mongodb+srv://cooluser:start123@cluster0.eltg3.mongodb.net/local_library?retryWrites=true&w=majority&appName=Cluster0";
 
 main().catch((err) => console.log(err));
 
